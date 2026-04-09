@@ -16,7 +16,7 @@ $db = $database->getConnection();
 // Instanciar o objeto Pizza
 $pizza = new Pizza($db);
  
-// try{ colocar para demonstrar erro com coluna errada mas lá no método read em pizza
+try{ //colocar para demonstrar erro com coluna errada mas lá no método read em pizza
     // Chamar o método read() para buscar as pizzas
     $stmt = $pizza->read();
     $num = $stmt->rowCount();
@@ -55,7 +55,7 @@ $pizza = new Pizza($db);
             array("message" => "Nenhuma pizza encontrada.")
         );
     }
-// }
-// catch (Exception $e) {
-//  echo json_encode(array("erro" => $e->getMessage()));
-// }
+}
+catch (Exception $e) {
+    echo json_encode(array("erro" => $e->getMessage()));
+}
