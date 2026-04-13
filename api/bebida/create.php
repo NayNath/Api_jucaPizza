@@ -12,7 +12,7 @@ include_once '../../models/Bebida.php';
 $database = new Database();
 $db = $database->getConnection();
  
-// Instanciar o objeto Pizza
+// Instanciar o objeto bebida
 $bebida = new Bebida($db);
  
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,12 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             !empty($data->litros) &&
             !empty($data->valor)
         ) {
-            // Atribuir os valores ao objeto Pizza
+            // Atribuir os valores ao objeto bebida
             $bebida->nome = $data->nome;
             $bebida->litros = $data->litros;
             $bebida->valor = $data->valor;
  
-            // Criar a pizza
+            // Criar a bebida
             if ($bebida->create()) {
                 http_response_code(201);
                 // Resposta de sucesso
