@@ -15,47 +15,76 @@ $db = $database->getConnection();
  
 // Instanciar o objeto Pizza
 $bebida = new Bebida($db);
- 
-try{ //colocar para demonstrar erro com coluna errada mas lá no método read em bebida
-    // Chamar o método read() para buscar as pizzas
-    $stmt = $bebida->read();
-    $num = $stmt->rowCount();
- 
-    // Verificar se mais de 0 registros foram encontrados
-    if ($num > 0) {
-        // Array de pizzas
-        $bebidas_arr = array();
- 
-        // Percorrer o resultado da consulta
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // A função extract transforma $row['nome'] em apenas $nome
-            extract($row);
- 
-            $bebida_item = array(
-                "id" => $idBebida,
-                "nome" => $nome,
-                "litros" => $litros,
-                "valor" => $valor
-            );
- 
-            array_push($bebidas_arr, $bebida_item);
-        }
- 
-        // Definir o código de resposta como 200 OK
-        http_response_code(200);
- 
-        // Mostrar os dados das pizzas em formato JSON
-        echo json_encode($bebidas_arr);
-    } else {
-        // Se nenhuma pizza for encontrada, definir o código de resposta como 404 Not Found
-        http_response_code(404);
- 
-        // Informar ao usuário que nenhuma pizza foi encontrada
-        echo json_encode(
-            array("message" => "Nenhuma bebida encontrada.")
+
+$bebida->idBebida = isset($_GET['id']) ? $_GET['id'] : null;
+
+if ($bebida->idBebida) {
+
+    $bebida->idBebida = $_GET['id'];
+
+    // Executa a query
+    $bebida->read_single();
+    //$pizza->nome != null
+    if(isset($bebida->nome)){
+        // Cria o array de resposta
+        $bebida_arr = array(
+            "id" => $bebida->idBebida,
+            "nome" => $bebida->nome,
+            "litros" => $bebida->litros,
+            "valor" => $bebida->valor
         );
+        http_response_code(200);
+
+        echo json_encode($bebida_arr, JSON_PRETTY_PRINT);
+    } else {
+        http_response_code(404);
+        echo json_encode(array("message" => "Nenhuma bebida encontrada."));
     }
 }
-catch (Exception $e) {
-    echo json_encode(array("erro" => $e->getMessage()));
+//*-------------------------------------------------------
+
+else{
+    try{ //colocar para demonstrar erro com coluna errada mas lá no método read em bebida
+        // Chamar o método read() para buscar as pizzas
+        $stmt = $bebida->read();
+        $num = $stmt->rowCount();
+    
+        // Verificar se mais de 0 registros foram encontrados
+        if ($num > 0) {
+            // Array de pizzas
+            $bebidas_arr = array();
+    
+            // Percorrer o resultado da consulta
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // A função extract transforma $row['nome'] em apenas $nome
+                extract($row);
+    
+                $bebida_item = array(
+                    "id" => $idBebida,
+                    "nome" => $nome,
+                    "litros" => $litros,
+                    "valor" => $valor
+                );
+    
+                array_push($bebidas_arr, $bebida_item);
+            }
+    
+            // Definir o código de resposta como 200 OK
+            http_response_code(200);
+    
+            // Mostrar os dados das pizzas em formato JSON
+            echo json_encode($bebidas_arr);
+        } else {
+            // Se nenhuma pizza for encontrada, definir o código de resposta como 404 Not Found
+            http_response_code(404);
+    
+            // Informar ao usuário que nenhuma pizza foi encontrada
+            echo json_encode(
+                array("message" => "Nenhuma bebida encontrada.")
+            );
+        }
+    }
+    catch (Exception $e) {
+        echo json_encode(array("erro" => $e->getMessage()));
+    }
 }
